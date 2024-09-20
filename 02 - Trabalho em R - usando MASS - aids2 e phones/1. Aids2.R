@@ -6,6 +6,9 @@ install.packages("ggplot2")
 library(MASS)
 library(ggplot2)
 
+#Vendo os dados totais
+MASS::Aids2
+
 # Usando o conjunto de dados Aids2 do pacote MASS
 data("Aids2")
 
@@ -22,7 +25,37 @@ variancia_idade <- var(Aids2$age, na.rm = TRUE)  # Calculando a Variância
 desvio_padrao_idade <- sd(Aids2$age, na.rm = TRUE)  # Calculando o Desvio Padrão
 
 # Gerando a Tabela de Frequência para o status dos pacientes
-tabela_frequencia_status <- table(Aids2$status)  # Contando os vivos e mortos
+edit(Aids2)
+
+# Verificar os status únicos
+unique_status <- sort(unique(Aids2$status))
+unique_status
+
+# Contar a frequência dos status
+status.freq <- table(Aids2$status)
+
+# Calcular a amplitude das classes
+classe <- length(status.freq)  # Número de classes (status)
+v <- range(as.numeric(status.freq))  # Extrai o maior e menor valor do conjunto de dados
+
+# Amplitude das classes
+amplitude <- (v[2] - v[1]) / classe
+amplitude <- ceiling(amplitude)  # Arredonda para o maior valor
+
+# Criar intervalos
+intervalo <- seq(v[1], v[2] + amplitude, by = amplitude)
+
+# Cortar os status em intervalos (se necessário)
+status.cut <- cut(as.numeric(status.freq), breaks = intervalo, right = FALSE)
+
+# Contar as frequências dos cortes
+status.freq.cut <- table(status.cut)
+
+# Criar a tabela final
+tabela_final <- data.frame(Status = names(status.freq), Frequencia = as.vector(status.freq))
+
+# Exibir a tabela final
+print(tabela_final)
 
 # Criando os Gráficos
 # Criando o Histograma da Idade dos Pacientes

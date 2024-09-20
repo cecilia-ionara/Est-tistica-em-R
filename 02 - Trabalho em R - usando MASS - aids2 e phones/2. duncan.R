@@ -5,6 +5,9 @@ library(ggplot2)
 # Usando o conjunto de dados Duncan do pacote carData
 data("Duncan")
 
+#visualizando
+carData::Duncan
+
 # Criando o gráfico de dispersão para verificar se há correlação linear entre prestígio e salário
 ggplot(Duncan, aes(x = prestige, y = income)) +
   geom_point(color = "blue") +
