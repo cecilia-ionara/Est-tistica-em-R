@@ -1,85 +1,90 @@
-# Instalando os pacotes necessários
-install.packages("MASS")
-install.packages("ggplot2")
-
-# Carregando os pacotes
+# Carregando os pacotes necessários
 library(MASS)
 library(ggplot2)
 
-#Vendo os dados totais
-MASS::Aids2
-
-# Usando o conjunto de dados Aids2 do pacote MASS
+# Carregando o conjunto de dados Aids2
 data("Aids2")
 
-# O conjunto de dados 'Aids2' está contendo informações sobre pacientes diagnosticados com AIDS na Austrália. 
-# informações: paciente com variáveis como sexo, idade, status de sobrevivência e categoria de transmissão.
+# Análise do conjunto de dados Aids2
+# Visualizando os dados
+print(head(Aids2))
 
-# Calculando as Medidas de Tendência Central para a idade dos pacientes
-media_idade <- mean(Aids2$age, na.rm = TRUE)  # Calculando a Média
-mediana_idade <- median(Aids2$age, na.rm = TRUE)  # Calculando a Mediana
-moda_idade <- as.numeric(names(sort(table(Aids2$age), decreasing = TRUE))[1])  # Determinando a Moda
+# Calculando medidas de tendência central para a idade dos pacientes
+media_idade <- mean(Aids2$age, na.rm = TRUE)  # Média
+mediana_idade <- median(Aids2$age, na.rm = TRUE)  # Mediana
+moda_idade <- as.numeric(names(sort(table(Aids2$age), decreasing = TRUE)[1]))  # Moda
 
-# Calculando as Medidas de Dispersão para a idade dos pacientes
-variancia_idade <- var(Aids2$age, na.rm = TRUE)  # Calculando a Variância
-desvio_padrao_idade <- sd(Aids2$age, na.rm = TRUE)  # Calculando o Desvio Padrão
+# Calculando medidas de dispersão para a idade dos pacientes
+variancia_idade <- var(Aids2$age, na.rm = TRUE)  # Variância
+desvio_padrao_idade <- sd(Aids2$age, na.rm = TRUE)  # Desvio Padrão
 
-# Gerando a Tabela de Frequência para o status dos pacientes
-edit(Aids2)
+# Exibindo as medidas calculadas
+cat("Média da Idade:", media_idade, "\n")
+cat("Mediana da Idade:", mediana_idade, "\n")
+cat("Moda da Idade:", moda_idade, "\n")
+cat("Variância da Idade:", variancia_idade, "\n")
+cat("Desvio Padrão da Idade:", desvio_padrao_idade, "\n")
 
-# Verificar os status únicos
-unique_status <- sort(unique(Aids2$status))
-unique_status
+# Criando gráficos para o conjunto de dados Aids2
+ggplot(Aids2, aes(x = status)) +
+  geom_bar(fill = "green") +
+  ggtitle("Gráfico de Barras - Contagem de Status dos Pacientes") +
+  xlab("Status") +
+  ylab("Frequência")
 
-# Contar a frequência dos status
-status.freq <- table(Aids2$status)
-
-# Calcular a amplitude das classes
-classe <- length(status.freq)  # Número de classes (status)
-v <- range(as.numeric(status.freq))  # Extrai o maior e menor valor do conjunto de dados
-
-# Amplitude das classes
-amplitude <- (v[2] - v[1]) / classe
-amplitude <- ceiling(amplitude)  # Arredonda para o maior valor
-
-# Criar intervalos
-intervalo <- seq(v[1], v[2] + amplitude, by = amplitude)
-
-# Cortar os status em intervalos (se necessário)
-status.cut <- cut(as.numeric(status.freq), breaks = intervalo, right = FALSE)
-
-# Contar as frequências dos cortes
-status.freq.cut <- table(status.cut)
-
-# Criar a tabela final
-tabela_final <- data.frame(Status = names(status.freq), Frequencia = as.vector(status.freq))
-
-# Exibir a tabela final
-print(tabela_final)
-
-# Criando os Gráficos
-# Criando o Histograma da Idade dos Pacientes
-ggplot(Aids2, aes(x = age)) +
-  geom_histogram(binwidth = 5, fill = "blue", color = "black") +
-  ggtitle("Histograma da Idade dos Pacientes com AIDS") +
-  xlab("Idade") + ylab("Frequência")
-
-#A: Vivo (Alive)
-#D: Morto (Dead)
-# Criando o Gráfico de Pizza para o Status dos Pacientes
 ggplot(Aids2, aes(x = "", fill = status)) +
   geom_bar(width = 1) +
   coord_polar(theta = "y") +
   ggtitle("Gráfico de Pizza - Status dos Pacientes com AIDS") +
   labs(fill = "Status")
 
-# Criando o Diagrama de Dispersão entre Idade e Status
+ggplot(Aids2, aes(x = age)) +
+  geom_histogram(binwidth = 5, fill = "blue", color = "black") +
+  ggtitle("Histograma da Idade dos Pacientes com AIDS") +
+  xlab("Idade") +
+  ylab("Frequência")
+
 ggplot(Aids2, aes(x = age, y = status)) +
   geom_point(color = "red") +
-  ggtitle("Diagrama de Dispersão - Idade vs Status dos Pacientes")
+  ggtitle("Diagrama de Dispersão - Idade vs Status dos Pacientes") +
+  xlab("Idade") +
+  ylab("Status")
 
-# Criando o Gráfico de Barras para o Status dos Pacientes
-ggplot(Aids2, aes(x = status)) +
-  geom_bar(fill = "green") +
-  ggtitle("Gráfico de Barras - Contagem de Status dos Pacientes")
+# Análise da coluna 'SG' (Gravidade Específica) do conjunto de dados petrol
+# Supondo que o conjunto de dados petrol já esteja carregado
+print(head(petrol$SG))  # Exibindo as primeiras linhas da coluna SG
 
+# Ordenando os valores de SG
+sg_ordenado <- sort(petrol$SG)
+print(sg_ordenado)  # Exibindo os valores ordenados
+
+# Criando o histograma sem plotar (definindo 5 intervalos)
+prices <- hist(petrol$SG, plot = FALSE, breaks = 5)
+
+# Extraindo o maior e menor valor do conjunto de dados SG
+v <- range(petrol$SG)
+
+# Calculando o número de classes (frequências)
+classe <- length(prices$counts)
+
+# Calculando a amplitude das classes
+amplitude <- (v[2] - v[1]) / classe
+amplitude <- ceiling(amplitude)  # Arredondando para o maior valor
+
+# Definindo os intervalos
+intervalo <- seq(v[1], amplitude * classe + v[1], by = amplitude)
+
+# Classificando os valores de SG dentro dos intervalos
+sg.cut <- cut(petrol$SG, intervalo, right = FALSE)
+
+# Criando a tabela de frequências
+sg.freq <- table(sg.cut)
+
+# Exibindo a tabela de frequências como coluna
+print(cbind(sg.freq))
+
+# Transformando em um data frame para facilitar a manipulação
+tabela.final <- data.frame(Intervalo = names(sg.freq), Frequencia = as.vector(sg.freq))
+
+# Visualizando a tabela final
+edit(tabela.final)
