@@ -50,41 +50,37 @@ ggplot(Aids2, aes(x = age, y = status)) +
   xlab("Idade") +
   ylab("Status")
 
-# Análise da coluna 'SG' (Gravidade Específica) do conjunto de dados petrol
-# Supondo que o conjunto de dados petrol já esteja carregado
-print(head(petrol$SG))  # Exibindo as primeiras linhas da coluna SG
+#FREQUENCIA 
 
-# Ordenando os valores de SG
-sg_ordenado <- sort(petrol$SG)
-print(sg_ordenado)  # Exibindo os valores ordenados
+# Extraindo o maior e menor valor do conjunto de dados de idade
+v_idade <- range(Aids2$age)
 
-# Criando o histograma sem plotar (definindo 5 intervalos)
-prices <- hist(petrol$SG, plot = FALSE, breaks = 5)
+# Definindo o número de intervalos (5 intervalos)
+classe_idade <- 5
 
-# Extraindo o maior e menor valor do conjunto de dados SG
-v <- range(petrol$SG)
+# Calculando a amplitude dos intervalos
+amplitude_idade <- (v_idade[2] - v_idade[1]) / classe_idade
+amplitude_idade <- ceiling(amplitude_idade)  # Arredondando para o valor superior
 
-# Calculando o número de classes (frequências)
-classe <- length(prices$counts)
+# Definindo os intervalos de idade
+intervalo_idade <- seq(v_idade[1], amplitude_idade * classe_idade + v_idade[1], by = amplitude_idade)
 
-# Calculando a amplitude das classes
-amplitude <- (v[2] - v[1]) / classe
-amplitude <- ceiling(amplitude)  # Arredondando para o maior valor
+# Classificando os valores de idade dentro dos intervalos
+idade_cut <- cut(Aids2$age, intervalo_idade, right = FALSE)
 
-# Definindo os intervalos
-intervalo <- seq(v[1], amplitude * classe + v[1], by = amplitude)
+# Criando a tabela de frequências cruzada entre idade e status (dead/alive)
+idade_status_freq <- table(idade_cut, Aids2$status)
 
-# Classificando os valores de SG dentro dos intervalos
-sg.cut <- cut(petrol$SG, intervalo, right = FALSE)
+# Exibindo a tabela de frequências
+print(idade_status_freq)
 
-# Criando a tabela de frequências
-sg.freq <- table(sg.cut)
+# Transformando a tabela em um data frame para facilitar a manipulação
+tabela_final_idade <- as.data.frame(idade_status_freq)
 
-# Exibindo a tabela de frequências como coluna
-print(cbind(sg.freq))
-
-# Transformando em um data frame para facilitar a manipulação
-tabela.final <- data.frame(Intervalo = names(sg.freq), Frequencia = as.vector(sg.freq))
+# Renomeando as colunas para melhor visualização
+colnames(tabela_final_idade) <- c("Intervalo", "Status", "Frequencia")
 
 # Visualizando a tabela final
-edit(tabela.final)
+edit(tabela_final_idade)
+
+
